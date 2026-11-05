@@ -1,13 +1,11 @@
-"""Bekannte Entitaeten und Aktionen des Metis-Sprachassistenten.
+"""Known entities and actions of the Metis voice assistant.
 
-Die Entitaeten bilden eine Hierarchie: ein Bereich enthaelt Leuchten,
-eine Leuchte kann mehrere Gluehbirnen haben. Ein Befehl kann auf jeder
-Ebene ansetzen; resolve() loest ihn zu den tatsaechlich schaltbaren
-Geraeten auf.
+Entities form a hierarchy: an area contains fixtures, a fixture may
+have several bulbs. A command can target any level; resolve() maps it
+to the devices that can actually be switched.
 
-Feld "z2m" ist der friendly_name in Zigbee2MQTT. None bedeutet: die
-Ebene existiert hier als logische Gruppe, in Zigbee2MQTT aber noch
-nicht.
+Field "z2m" is the friendly_name in Zigbee2MQTT. None means the level
+exists here as a logical group but not yet in Zigbee2MQTT.
 """
 
 ACTIONS: dict[str, list[str]] = {
@@ -17,7 +15,7 @@ ACTIONS: dict[str, list[str]] = {
 }
 
 ENTITIES: dict[str, dict] = {
-    # --- Bereiche -------------------------------------------------
+    # --- Areas ----------------------------------------------------
     "light.all": {
         "kind": "area",
         "z2m": None,
@@ -67,7 +65,7 @@ ENTITIES: dict[str, dict] = {
         "members": ["light.bedroom_1", "light.bed_1"],
     },
 
-    # --- Leuchten des Buecherregals -------------------------------
+    # --- Bookshelf fixtures ---------------------------------------
     "light.alexandria_lamp_1": {
         "kind": "fixture",
         "z2m": None,
@@ -93,7 +91,7 @@ ENTITIES: dict[str, dict] = {
         "members": ["light.alexandria_bulb_7"],
     },
 
-    # --- Gluehbirnen des Buecherregals ----------------------------
+    # --- Bookshelf bulbs ------------------------------------------
     "light.alexandria_bulb_1": {
         "kind": "bulb", "z2m": "Alexandria 1",
         "aliases": ["library 1a", "alexandria 1a"], "members": [],
@@ -123,7 +121,7 @@ ENTITIES: dict[str, dict] = {
         "aliases": ["library 4a", "alexandria 4a"], "members": [],
     },
 
-    # --- Einzelne Leuchten in den Raeumen -------------------------
+    # --- Individual fixtures per room -----------------------------
     "light.living_room_1": {
         "kind": "fixture", "z2m": "living room 1",
         "aliases": ["living room 1"], "members": [],
@@ -152,11 +150,11 @@ ENTITIES: dict[str, dict] = {
 
 
 def resolve(entity_id: str) -> list[str]:
-    """Loest eine Entitaet zu den schaltbaren Geraeten darunter auf.
+    """Resolves an entity to the switchable devices below it.
 
-    Hat die Entitaet selbst einen Zigbee2MQTT-Namen, wird sie direkt
-    geschaltet (Gruppen-Multicast). Sonst wird rekursiv in die
-    Mitglieder abgestiegen.
+    If the entity has a Zigbee2MQTT name of its own it is switched
+    directly (group multicast). Otherwise the members are traversed
+    recursively.
     """
     entry = ENTITIES[entity_id]
     if entry["z2m"] is not None:
@@ -168,7 +166,7 @@ def resolve(entity_id: str) -> list[str]:
 
 
 def all_entity_aliases() -> list[tuple[str, str]]:
-    """Alle (Alias, Entitaets-ID) Paare als flache Liste."""
+    """All (alias, entity id) pairs as a flat list."""
     return [
         (alias, entity_id)
         for entity_id, entry in ENTITIES.items()
@@ -177,7 +175,7 @@ def all_entity_aliases() -> list[tuple[str, str]]:
 
 
 def all_action_aliases() -> list[tuple[str, str]]:
-    """Alle (Alias, Aktions-ID) Paare als flache Liste."""
+    """All (alias, action id) pairs as a flat list."""
     return [
         (alias, action)
         for action, aliases in ACTIONS.items()

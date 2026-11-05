@@ -1,7 +1,7 @@
-"""HTTP-Schnittstelle.
+"""HTTP interface.
 
-Duenne Huelle um die Korrekturlogik. Welche Implementierung laeuft,
-entscheidet ausschliesslich die Konfiguration.
+Thin wrapper around the correction logic. Which implementation runs is
+decided solely by configuration.
 """
 
 import logging
@@ -20,7 +20,7 @@ def build_corrector():
     if settings.corrector_backend == "rules":
         return RuleCorrector()
     raise NotImplementedError(
-        f"Backend '{settings.corrector_backend}' ist noch nicht implementiert."
+        f"Backend '{settings.corrector_backend}' is not implemented yet."
     )
 
 
@@ -28,7 +28,7 @@ corrector = build_corrector()
 
 app = FastAPI(
     title="metis_logos",
-    description="Korrigiert Transkripte zu gueltigen Smart-Home-Befehlen.",
+    description="Corrects noisy transcripts into valid smart home commands.",
     version="0.1.0",
 )
 

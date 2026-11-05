@@ -1,4 +1,4 @@
-"""Ein- und Ausgabeformat der API."""
+"""Request and response schema of the API."""
 
 from pydantic import BaseModel, Field
 
@@ -10,7 +10,7 @@ class CorrectRequest(BaseModel):
         ...,
         min_length=1,
         max_length=1000,
-        description="Roher Text aus der Spracherkennung",
+        description="Raw speech-to-text output",
     )
 
 

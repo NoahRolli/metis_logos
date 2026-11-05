@@ -1,8 +1,8 @@
-"""Regelbasierte Korrektur: Version 1, die Basislinie.
+"""Rule based correction: version 1, the baseline.
 
-Arbeitet ohne Modell und ohne Netzzugriff, laeuft damit in jeder
-Umgebung identisch. Dient zugleich als Vergleichsmassstab fuer die
-spaetere modellbasierte Variante.
+Works without a model and without network access, so it behaves
+identically in every environment. Also serves as the yardstick the
+later model based variant has to beat.
 """
 
 import re
@@ -25,7 +25,7 @@ _BULB_SUFFIX = re.compile(r"(\d)\s+([ab])\b")
 
 
 def normalize(text: str) -> str:
-    """Bringt rohen Transkript-Text auf eine vergleichbare Form."""
+    """Brings raw transcript text into a comparable form."""
     text = text.lower()
     text = re.sub(r"[^a-z0-9%\s]", " ", text)
     tokens = []
@@ -39,23 +39,23 @@ def normalize(text: str) -> str:
 
 
 def similarity(a: str, b: str) -> float:
-    """Aehnlichkeit zweier Ausdruecke, ohne Leerzeichen.
+    """Similarity of two expressions, ignoring whitespace.
 
-    Das Entfernen der Leerzeichen ist der entscheidende Schritt: die
-    Spracherkennung zerlegt zusammengesetzte Namen regelmaessig in zwei
-    Woerter ("bedroom" -> "bad room").
+    Dropping the spaces is the decisive step: speech recognition
+    regularly splits compound names into two words
+    ("bedroom" -> "bad room").
     """
     return SequenceMatcher(None, a.replace(" ", ""), b.replace(" ", "")).ratio()
 
 
 class RuleCorrector:
-    """Korrigiert Transkripte durch Abgleich mit dem Vokabular."""
+    """Corrects transcripts by matching them against the vocabulary."""
 
     name = "rules"
 
     def __init__(self) -> None:
-        # Laengste Aliase zuerst, damit "turn off" vor "turn on" greift
-        # und nicht versehentlich ein kuerzeres Praefix gewinnt.
+        # Longest aliases first so that "turn off" wins over "turn on"
+        # and no shorter prefix matches by accident.
         self._actions = sorted(
             all_action_aliases(), key=lambda pair: -len(pair[0])
         )
@@ -67,13 +67,13 @@ class RuleCorrector:
         if not norm:
             return result
 
-        # Helligkeit herausloesen, bevor der Rest als Ziel gelesen wird.
+        # Extract brightness before the rest is read as the target.
         match = _PERCENT.search(norm)
         if match:
             result.value = min(100, int(match.group(1)))
             norm = _PERCENT.sub(" ", norm).strip()
 
-        # Aktion am Satzanfang.
+        # Action at the start of the sentence.
         rest = norm
         for alias, action in self._actions:
             if norm.startswith(alias):
@@ -90,8 +90,8 @@ class RuleCorrector:
         if not rest:
             return result
 
-        # Bestes Ziel: hoechste Aehnlichkeit, bei Gleichstand der
-        # laengere und damit spezifischere Alias.
+        # Best target: highest similarity, ties broken by the longer
+        # and therefore more specific alias.
         best_alias, best_entity, best_score = max(
             (
                 (alias, entity_id, similarity(rest, alias))

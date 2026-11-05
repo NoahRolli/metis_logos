@@ -1,9 +1,8 @@
-"""Gemeinsame Schnittstelle aller Korrektur-Implementierungen.
+"""Shared interface for all correction implementations.
 
-Jede Implementierung bekommt rohen Text aus der Spracherkennung und
-gibt dasselbe Ergebnisobjekt zurueck. Dadurch sind die regelbasierte
-und die modellbasierte Variante gegeneinander austauschbar und
-vergleichbar.
+Every implementation receives raw speech-to-text output and returns the
+same result object. This keeps the rule based and the model based
+variant interchangeable and directly comparable.
 """
 
 from dataclasses import dataclass, field
@@ -12,14 +11,14 @@ from typing import Protocol
 
 @dataclass
 class Correction:
-    """Das Ergebnis einer Korrektur."""
+    """The result of a correction."""
 
-    raw: str                      # Eingabe, unveraendert
+    raw: str                      # input, unchanged
     action: str | None = None     # turn_on | turn_off | set_brightness
-    entity: str | None = None     # kanonische Entitaets-ID
-    value: int | None = None      # Helligkeit in Prozent, falls genannt
-    confidence: float = 0.0       # 0.0 bis 1.0
-    targets: list[str] = field(default_factory=list)  # aufgeloeste Geraete
+    entity: str | None = None     # canonical entity id
+    value: int | None = None      # brightness in percent, if given
+    confidence: float = 0.0       # 0.0 to 1.0
+    targets: list[str] = field(default_factory=list)  # resolved devices
 
     @property
     def is_command(self) -> bool:
@@ -27,7 +26,7 @@ class Correction:
 
 
 class Corrector(Protocol):
-    """Was jede Implementierung koennen muss."""
+    """What every implementation has to provide."""
 
     name: str
 

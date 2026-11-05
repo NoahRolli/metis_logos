@@ -1,6 +1,6 @@
 FROM python:3.13-slim
 
-# Kein Root im Container: Grundregel aus dem SecurityOps-Teil.
+# No root inside the container: ground rule from the SecurityOps part.
 RUN useradd --create-home --uid 1000 appuser
 WORKDIR /srv
 
@@ -11,7 +11,7 @@ COPY app ./app
 
 USER appuser
 
-# Die Plattform gibt den Port vor; lokal gilt der Default.
+# The platform dictates the port; locally the default applies.
 ENV PORT=8000
 EXPOSE 8000
 
