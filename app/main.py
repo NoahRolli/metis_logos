@@ -33,6 +33,16 @@ app = FastAPI(
 )
 
 
+@app.get("/")
+def root() -> dict:
+    """Points visitors at the interactive documentation."""
+    return {
+        "service": "metis_logos",
+        "docs": "/docs",
+        "endpoints": ["/health", "/correct"],
+    }
+
+
 @app.get("/health")
 def health() -> dict:
     return {"status": "ok", "backend": corrector.name}
