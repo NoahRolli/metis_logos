@@ -1,0 +1,33 @@
+ACTIONS
+  turn_on
+  turn_off
+  set_brightness
+  none
+  unclear
+
+ENTITIES
+  light.all
+  light.alexandria
+  light.entrance
+  light.living_room
+  light.kitchen
+  light.bedroom
+  light.alexandria_lamp_1
+  light.alexandria_lamp_2
+  light.alexandria_lamp_3
+  light.alexandria_lamp_4
+  light.alexandria_bulb_1
+  light.alexandria_bulb_2
+  light.alexandria_bulb_3
+  light.alexandria_bulb_4
+  light.alexandria_bulb_5
+  light.alexandria_bulb_6
+  light.alexandria_bulb_7
+  light.living_room_1
+  light.kitchen_1
+  light.kitchen_2
+  light.bedroom_1
+  light.bed_1
+  light.tolomeo
+  none
+  unclear

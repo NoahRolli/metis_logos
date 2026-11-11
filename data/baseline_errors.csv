@@ -1,0 +1,13 @@
+transcript,count,expected,got,confidence,reason
+Turn off bedroom one.,3,turn_off light.bed_1,turn_off light.bedroom_1,1.0,wrong entity
+Deactivate bedroom 1.,1,turn_off light.bed_1,turn_off light.bedroom_1,1.0,wrong entity
+Turn on the kitchen crew.,1,turn_on light.kitchen_2,turn_on light.kitchen,0.778,wrong entity
+Good night.,1,turn_off light.all,none none,0.0,rejected: confidence below threshold
+Deactivate light.,1,turn_off light.all,turn_off light.bed_1,0.769,wrong entity
+Turn off the light.,1,turn_off light.all,turn_off light.bed_1,0.769,wrong entity
+Turn on bedroom 2.,1,turn_on light.bed_2,turn_on light.bedroom,0.933,wrong entity
+"Turn on bed, too.",1,turn_on light.bed_2,turn_on light.bed_1,0.75,wrong entity
+Turn on Alexandria.  Turn on Alexandria.,1,turn_on light.alexandria,turn_on none,0.0,rejected: confidence below threshold
+Turn off bedroom 1.,1,turn_off light.bed_1,turn_off light.bedroom_1,1.0,wrong entity
+Turn on the kitchen lights.  Turn on the kitchen lights.,1,turn_on light.kitchen,turn_on none,0.0,rejected: confidence below threshold
+Turn off the kitchen lights.  Turn off the kitchen lights.  Turn off the kitchen lights.,1,turn_off light.kitchen,turn_off none,0.0,rejected: confidence below threshold

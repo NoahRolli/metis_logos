@@ -1,0 +1,96 @@
+transcript,count,expected_action,expected_entity
+Turn off all the lights.,41,turn_off,light.all
+Turn on living room 1.,27,turn_on,light.living_room_1
+Turn on Alexandria.,25,turn_on,light.alexandria
+Turn off the kitchen.,16,turn_off,light.kitchen
+Turn off Alexandria.,11,turn_off,light.alexandria
+Turn off the living room.,11,turn_off,light.living_room
+Turn on all the lights.,8,turn_on,light.all
+Turn on desktop.,7,turn_on,
+Turn off living room 1.,7,turn_off,light.living_room_1
+Turn off the bedroom.,6,turn_off,
+Deactivate kitchen.,5,turn_off,light.kitchen
+Turn off all of the lights.,5,turn_off,light.all
+Turn on bed 1.,5,turn_on,light.bed_1
+Turn on the bedroom.,4,turn_on,light.bedroom
+Activate bed 1.,4,turn_on,light.bed_1
+Turn on bed one.,4,turn_on,light.bed_1
+Turn on the bedroom light.,4,turn_on,light.bedroom
+Deactivate kitchen too.,3,turn_off,light.kitchen_2
+Deactivate desktop.,3,turn_off,light.tolomeo
+What time is it?,3,,
+Turn on the kitchen.,3,turn_on,light.kitchen
+Turn on living room one.,3,turn_on,light.living_room_1
+Turn on kitchen one.,3,turn_on,light.kitchen_1
+Turn off bedroom one.,3,turn_off,light.bed_1
+Turn on the living room.,3,turn_on,light.living_room
+Turn off the entrance.,3,turn_off,light.entrance
+Deactivate all the lights.,2,turn_off,light.all
+Turn off kitchen.,2,turn_off,light.kitchen
+Turn on Bed 1.,2,turn_on,light.bed_1
+Turn off the desktop.,2,turn_off,light.tolomeo
+Turn off kitchen one.,2,turn_off,light.kitchen_1
+Turn off bedroom.,2,turn_off,light.bedroom
+Turn on the stove.,2,turn_on,
+Turn on the desktop.,2,turn_on,light.tolomeo
+Turn on the entrance.,2,turn_on,light.entrance
+Turn off desktop.,2,turn_off,light.tolomeo
+Turn off living room.,2,turn_off,light.living_room
+Turn on bad one.,2,turn_on,light.bed_1
+Turn on the living room light.,2,turn_on,light.living_room
+Deactivate bedroom 1.,1,turn_off,light.bed_1
+Deactivate bed 1.,1,turn_off,light.bed_1
+Turn on the kitchen crew.,1,turn_on,light.kitchen_2
+Deactivate living room.,1,turn_off,light.living_room
+Turn off bed 1.,1,turn_off,light.bed_1
+Activate kitchen lights.,1,turn_on,light.kitchen
+Activate kitchen one.,1,turn_on,light.kitchen_1
+Activate the kitchen.,1,turn_on,light.kitchen
+Good night.,1,turn_off,light.all
+Deactivate light.,1,turn_off,light.all
+Activate desktop.,1,turn_on,light.tolomeo
+Activate kitchen.,1,turn_on,light.kitchen
+Deactivate kitchen 2.,1,turn_off,light.kitchen_2
+Activate Alexandria.,1,turn_on,light.alexandria
+Turn off living room lights.,1,turn_off,light.living_room
+Turn off bed one.,1,turn_off,light.bed_1
+Turn off the bedroom lights.,1,turn_off,light.bedroom
+Turn on the kitchen light.,1,turn_on,light.kitchen
+Deactivate kitchen one.,1,turn_off,light.kitchen_1
+Turn on kitchen too.,1,turn_on,light.kitchen_2
+Activate kitchen 2.,1,turn_on,light.kitchen_2
+Deactivate Alexandria.,1,turn_off,light.alexandria
+Turn off kitchen 2.,1,turn_off,light.kitchen_2
+Deactivate bedroom.,1,turn_off,light.bedroom
+Turn off the light.,1,turn_off,light.all
+Turn on the bed light.,1,turn_on,light.bed_1
+Turn on bed light.,1,turn_on,light.bed_1
+Turn on the kitchen lights.,1,turn_on,light.kitchen
+Turn on bedroom.,1,turn_on,light.bedroom
+Turn on bedroom 2.,1,turn_on,light.bed_2
+"Turn on bed, too.",1,turn_on,light.bed_2
+Turn on Alexandria.  Turn on Alexandria.,1,turn_on,light.alexandria
+Turn on entrance.,1,turn_on,light.entrance
+Turn on the board lights.,1,turn_on,
+Turn off old lights.,1,turn_off,light.all
+Turn off bedroom 1.,1,turn_off,light.bed_1
+Turn on living room light.,1,turn_on,light.living_room
+"Turn on the room light. That's the last one we can turn on.  I'm sorry, but to turn on the room light, you have to turn that into a bookshelf.  And we just have to turn the room light onto a sheet.  Yes.  That's okay, because the sheet is a little bit sharper.  Just a little more.  Yes.",1,turn_on,
+Go to the bathroom.  Go to the bathroom.,1,turn_off,
+Turn on a little something.,1,turn_on,
+Turn on the kitchen lights.  Turn on the kitchen lights.,1,turn_on,light.kitchen
+"This is the kind of book I'm talking to for every fucking day.  Really good, I think, yeah.  So many videos from Iron Man.  This is us, I mean.  Yeah, so.",1,,
+Turn off the kitchen lights.  Turn off the kitchen lights.  Turn off the kitchen lights.,1,turn_off,light.kitchen
+Turn off the living room. Good afternoon.,1,turn_off,
+"Turn on Alexandria.  Probably doesn't work because of the sound.  Also, like I said, click on it before, they're not knowing what happens.  I don't know if that did anything.",1,turn_on,
+So cool. Turn on.,1,turn_on,
+Turn off let me grow one.,1,turn_off,
+Turn on the bathroom.,1,turn_on,
+"Turn on... Turn off living room 1.  When others have, they are a de-extension company.",1,turn_on,
+Go fuck yourself.,1,,
+Turn on the lights in the entrance.,1,turn_on,light.entrance
+Turn on all of the lights.,1,turn_on,light.all
+Turn on boiler lights.,1,turn_on,
+Turn on the living room lights.,1,turn_on,light.living_room
+Turn off the lights in the kitchen.,1,turn_off,light.kitchen
+Turn on the living room one.,1,turn_on,light.living_room_1
