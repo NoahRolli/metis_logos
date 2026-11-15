@@ -1,11 +1,10 @@
 """Measures correction quality against the labelled test set.
 
-Reports two accuracies:
-  - per unique transcript, so every phrasing counts once
-  - weighted by how often each transcript actually occurred
-
-The weighted number is the one that describes day to day use; the
-unweighted one shows whether rare phrasings are handled too.
+Reports accuracy per unique transcript and weighted by how often each
+transcript actually occurred. Clarifications are counted separately,
+and split by whether the intended target was among the candidates: a
+clarification that does not offer the right answer is no better than a
+rejection.
 """
 
 import csv
@@ -30,6 +29,31 @@ def read_labels(path: Path) -> list[dict]:
     return rows
 
 
+def classify(result, want_action: str, want_entity: str) -> str:
+    """Puts one outcome into exactly one bucket."""
+    wants_nothing = want_action == "none"
+
+    if result.status == "command":
+        if wants_nothing:
+            return "false positive"
+        if result.action == want_action and result.entity == want_entity:
+            return "correct"
+        return "wrong command"
+
+    if result.status == "clarify":
+        if wants_nothing:
+            return "false positive"
+        if any(c.entity == want_entity for c in result.candidates):
+            return "clarify, target offered"
+        return "clarify, target missing"
+
+    return "correctly rejected" if wants_nothing else "rejected"
+
+
+GOOD = {"correct", "correctly rejected"}
+RECOVERABLE = {"clarify, target offered"}
+
+
 def main() -> None:
     if not LABELS.exists():
         sys.exit(f"{LABELS} not found. Export the labelled sheet as CSV first.")
@@ -37,11 +61,10 @@ def main() -> None:
     rows = read_labels(LABELS)
     corrector = RuleCorrector()
 
-    total = weighted_total = 0
-    hits = weighted_hits = 0
+    buckets: Counter[str] = Counter()
+    weighted: Counter[str] = Counter()
     skipped = 0
-    reasons: Counter[str] = Counter()
-    errors: list[dict] = []
+    problems: list[dict] = []
 
     for row in rows:
         text = (row.get("transcript") or "").strip()
@@ -54,53 +77,50 @@ def main() -> None:
             continue
 
         result = corrector.correct(text)
-        got_action = result.action or "none"
-        got_entity = result.entity or "none"
-        ok = (got_action == want_action) and (got_entity == want_entity)
+        bucket = classify(result, want_action, want_entity)
+        buckets[bucket] += 1
+        weighted[bucket] += count
 
-        total += 1
-        weighted_total += count
-        if ok:
-            hits += 1
-            weighted_hits += count
-        else:
-            if want_action == "none":
-                reason = "false positive: noise accepted as command"
-            elif got_entity == "none":
-                reason = "rejected: confidence below threshold"
-            elif got_entity != want_entity:
-                reason = "wrong entity"
-            else:
-                reason = "wrong action"
-            reasons[reason] += 1
-            errors.append({
+        if bucket not in GOOD:
+            problems.append({
                 "transcript": text,
                 "count": count,
                 "expected": f"{want_action} {want_entity}",
-                "got": f"{got_action} {got_entity}",
+                "status": result.status,
+                "got": f"{result.action or 'none'} {result.entity or 'none'}",
+                "candidates": " | ".join(f"{c.entity}={c.confidence}" for c in result.candidates),
                 "confidence": result.confidence,
-                "reason": reason,
+                "bucket": bucket,
             })
 
+    total = sum(buckets.values())
+    w_total = sum(weighted.values())
     if total == 0:
         sys.exit("No usable rows. Did you fill in expected_action and expected_entity?")
 
-    print(f"Backend:            {corrector.name}")
-    print(f"Labelled rows:      {len(rows)}  (skipped: {skipped})")
-    print(f"Evaluated:          {total} unique / {weighted_total} occurrences")
-    print()
-    print(f"Accuracy unique:    {hits}/{total} = {hits / total:.1%}")
-    print(f"Accuracy weighted:  {weighted_hits}/{weighted_total} = {weighted_hits / weighted_total:.1%}")
-    print()
-    print("Errors by reason:")
-    for reason, n in reasons.most_common():
-        print(f"  {n:3}  {reason}")
+    good = sum(buckets[b] for b in GOOD)
+    w_good = sum(weighted[b] for b in GOOD)
+    rec = sum(buckets[b] for b in RECOVERABLE)
+    w_rec = sum(weighted[b] for b in RECOVERABLE)
 
-    if errors:
+    print(f"Backend:              {corrector.name}")
+    print(f"Labelled rows:        {len(rows)}  (skipped: {skipped})")
+    print(f"Evaluated:            {total} unique / {w_total} occurrences")
+    print()
+    print(f"Handled directly:     {good}/{total} = {good / total:.1%}"
+          f"   |  weighted {w_good}/{w_total} = {w_good / w_total:.1%}")
+    print(f"Plus after asking:    {good + rec}/{total} = {(good + rec) / total:.1%}"
+          f"   |  weighted {w_good + w_rec}/{w_total} = {(w_good + w_rec) / w_total:.1%}")
+    print()
+    print("Breakdown (unique / weighted):")
+    for bucket, n in buckets.most_common():
+        print(f"  {n:3} / {weighted[bucket]:3}   {bucket}")
+
+    if problems:
         with REPORT.open("w", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=list(errors[0]))
+            writer = csv.DictWriter(f, fieldnames=list(problems[0]))
             writer.writeheader()
-            writer.writerows(errors)
+            writer.writerows(problems)
         print(f"\nDetails -> {REPORT}")
 
 

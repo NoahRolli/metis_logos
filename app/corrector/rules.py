@@ -9,7 +9,7 @@ import re
 from difflib import SequenceMatcher
 
 from app.config import settings
-from app.corrector.base import Correction
+from app.corrector.base import Candidate, Correction
 from app.vocabulary import all_action_aliases, all_entity_aliases, resolve
 
 NUMBER_WORDS = {
@@ -61,6 +61,16 @@ class RuleCorrector:
         )
         self._entities = all_entity_aliases()
 
+    def _rank(self, expression: str) -> list[Candidate]:
+        """Best confidence per entity, highest first."""
+        best: dict[str, float] = {}
+        for alias, entity_id in self._entities:
+            score = similarity(expression, alias)
+            if score > best.get(entity_id, 0.0):
+                best[entity_id] = score
+        ranked = sorted(best.items(), key=lambda item: -item[1])
+        return [Candidate(entity, round(score, 3)) for entity, score in ranked]
+
     def correct(self, text: str) -> Correction:
         result = Correction(raw=text)
         norm = normalize(text)
@@ -82,6 +92,7 @@ class RuleCorrector:
                 break
 
         if result.action is None:
+            result.value = None
             return result
 
         if result.value is not None:
@@ -90,20 +101,19 @@ class RuleCorrector:
         if not rest:
             return result
 
-        # Best target: highest similarity, ties broken by the longer
-        # and therefore more specific alias.
-        best_alias, best_entity, best_score = max(
-            (
-                (alias, entity_id, similarity(rest, alias))
-                for alias, entity_id in self._entities
-            ),
-            key=lambda item: (item[2], len(item[0])),
-        )
+        ranked = self._rank(rest)
+        top = ranked[0]
+        result.confidence = top.confidence
 
-        if best_score < settings.min_confidence:
-            return result
+        if top.confidence >= settings.min_confidence:
+            result.status = "command"
+            result.entity = top.entity
+            result.targets = resolve(top.entity)
+        elif top.confidence >= settings.clarify_confidence:
+            result.status = "clarify"
+            result.candidates = [
+                c for c in ranked[: settings.max_candidates]
+                if c.confidence >= settings.clarify_confidence
+            ]
 
-        result.entity = best_entity
-        result.confidence = round(best_score, 3)
-        result.targets = resolve(best_entity)
         return result

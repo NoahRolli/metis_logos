@@ -19,7 +19,8 @@ ENTITIES: dict[str, dict] = {
     "light.all": {
         "kind": "area",
         "z2m": None,
-        "aliases": ["all the lights", "all lights", "everything"],
+        "aliases": ["all the lights", "all lights", "everything",
+                    "light", "lights", "the lights"],
         "members": [
             "light.alexandria",
             "light.entrance",
@@ -62,7 +63,7 @@ ENTITIES: dict[str, dict] = {
         "kind": "area",
         "z2m": "bedroom",
         "aliases": ["bedroom", "bedroom lights"],
-        "members": ["light.bedroom_1", "light.bed_1"],
+        "members": ["light.bedroom_main", "light.bed_1", "light.bed_2"],
     },
 
     # --- Bookshelf fixtures ---------------------------------------
@@ -134,13 +135,27 @@ ENTITIES: dict[str, dict] = {
         "kind": "fixture", "z2m": "kitchen 2",
         "aliases": ["kitchen 2"], "members": [],
     },
-    "light.bedroom_1": {
-        "kind": "fixture", "z2m": "bedroom 1",
-        "aliases": ["bedroom 1"], "members": [],
+    "light.bedroom_main": {
+        "kind": "fixture", "z2m": "bedroom_main",
+        "aliases": ["bedroom main", "bedroom ceiling", "ceiling light"],
+        "members": [],
     },
+    # Spoken as "bedroom one"; Zigbee2MQTT calls it "bed 1".
     "light.bed_1": {
         "kind": "fixture", "z2m": "bed 1",
-        "aliases": ["bed 1", "bed light"], "members": [],
+        "aliases": ["bed 1", "bedroom 1", "bed light"], "members": [],
+    },
+    # Spoken as "bedroom two". The Zigbee2MQTT name "bedroom 1" is a
+    # leftover from an earlier naming scheme and does not match what
+    # this lamp is called out loud. Renaming it in Zigbee2MQTT would
+    # change the MQTT topic, so the mapping is kept here instead.
+    "light.bed_2": {
+        "kind": "fixture", "z2m": "bedroom 1",
+        "aliases": ["bed 2", "bedroom 2"], "members": [],
+    },
+    "fan.thoth": {
+        "kind": "appliance", "z2m": "thoth_fan",
+        "aliases": ["fan", "thoth fan", "ventilator"], "members": [],
     },
     "light.tolomeo": {
         "kind": "fixture", "z2m": "Tolomeo",

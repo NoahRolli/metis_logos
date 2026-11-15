@@ -30,8 +30,15 @@ class Settings(BaseSettings):
     azure_endpoint_url: str | None = None
     azure_endpoint_key: str | None = None
 
-    # Below this confidence an input counts as "no command".
+    # At or above this confidence the command is executed directly.
     min_confidence: float = 0.6
+
+    # Between clarify_confidence and min_confidence the service asks
+    # back instead of guessing. Below it the input counts as noise.
+    clarify_confidence: float = 0.35
+
+    # How many candidates a clarification offers.
+    max_candidates: int = 3
 
 
 settings = Settings()
