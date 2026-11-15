@@ -40,5 +40,12 @@ class Settings(BaseSettings):
     # How many candidates a clarification offers.
     max_candidates: int = 3
 
+    # A number is the part of a command that carries the most meaning:
+    # "bedroom 1" and "bedroom 2" are different lamps although the words
+    # are nearly identical. When the numbers disagree the match is cut
+    # down by this factor, which pushes it into the clarify range
+    # instead of letting it win outright.
+    index_mismatch_penalty: float = 0.45
+
 
 settings = Settings()

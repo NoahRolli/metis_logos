@@ -38,6 +38,21 @@ def normalize(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip()
 
 
+_INDEX = re.compile(r"\s*(\d+[ab]?)$")
+
+
+def split_index(expression: str) -> tuple[str, str | None]:
+    """Separates a trailing number from the rest.
+
+    "bedroom 2" -> ("bedroom", "2"), "library 1b" -> ("library", "1b"),
+    "kitchen" -> ("kitchen", None).
+    """
+    match = _INDEX.search(expression)
+    if not match:
+        return expression, None
+    return expression[: match.start()].strip(), match.group(1)
+
+
 def similarity(a: str, b: str) -> float:
     """Similarity of two expressions, ignoring whitespace.
 
@@ -46,6 +61,22 @@ def similarity(a: str, b: str) -> float:
     ("bedroom" -> "bad room").
     """
     return SequenceMatcher(None, a.replace(" ", ""), b.replace(" ", "")).ratio()
+
+
+def score(expression: str, alias: str) -> float:
+    """How well an expression matches an alias.
+
+    The wording is compared loosely, because misheard words are the
+    normal case. A trailing number is compared strictly, because it
+    decides which device is meant and a wrong one would switch the
+    wrong lamp.
+    """
+    expr_base, expr_index = split_index(expression)
+    alias_base, alias_index = split_index(alias)
+    base = similarity(expr_base, alias_base)
+    if expr_index == alias_index:
+        return base
+    return base * settings.index_mismatch_penalty
 
 
 class RuleCorrector:
@@ -65,11 +96,11 @@ class RuleCorrector:
         """Best confidence per entity, highest first."""
         best: dict[str, float] = {}
         for alias, entity_id in self._entities:
-            score = similarity(expression, alias)
-            if score > best.get(entity_id, 0.0):
-                best[entity_id] = score
+            value = score(expression, alias)
+            if value > best.get(entity_id, 0.0):
+                best[entity_id] = value
         ranked = sorted(best.items(), key=lambda item: -item[1])
-        return [Candidate(entity, round(score, 3)) for entity, score in ranked]
+        return [Candidate(entity, round(value, 3)) for entity, value in ranked]
 
     def correct(self, text: str) -> Correction:
         result = Correction(raw=text)
