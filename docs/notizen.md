@@ -150,3 +150,52 @@ systematische statt zufällige Fehler, wenig Trainingsdaten.
 - Reflexion der Gastvorträge: AWS 20.10., omegaML 17.11.
 - Eigenständigkeitserklärung, Deklaration der KI-Nutzung
 - Präsentation 08. oder 15.12., ca. 3.5 Minuten
+
+## Einordnung nach Lektion 5 (Infrastructure Decisions)
+
+Das Deck liefert den theoretischen Rahmen für Entscheidungen, die im
+Projekt praktisch getroffen wurden.
+
+**Paradigma.** Der Dienst läuft on-premises auf Thoth, als Demo in der
+Public Cloud bei render.com, und die Spracherfassung geschieht am Edge
+auf dem Voice-Puck. Die Architektur deckt damit alle drei Varianten ab,
+die das Deck gegenüberstellt.
+
+**"Welches ist das kleinste Modell, das die Aufgabe zuverlässig löst?"**
+(Folie 15). Im Projekt durchgespielt: regelbasiert ohne Modell,
+qwen3:30b-a3b, llama3.1:8b, qwen2.5:14b. Die regelbasierte Variante ist
+die radikale Antwort auf diese Frage und erreicht 98.1 Prozent.
+
+**Latenz.** Die Schwellen auf Folie 10 stufen alles über einer Sekunde
+als "frustrierend" ein. Gemessen im Ollama-Log auf Thoth: 3.4 und 6.5
+Sekunden pro Anfrage für qwen3:30b-a3b, bei mehreren Werkzeugrunden
+entsprechend mehr. Die regelbasierte Korrektur antwortet in
+Millisekunden. Für Sprachsteuerung ist Latenz das bindende Kriterium,
+nicht Genauigkeit.
+
+**Grenzen kleiner Modelle** (Folie 24): "Kleine Modelle tun sich schwer,
+viele Regeln gleichzeitig zu befolgen." Im Projekt direkt beobachtet:
+Der Systemprompt für den Konversationsagenten verlangt Namensauflösung,
+Kürze, Mehrfachbefehle und Rückfragen zugleich. qwen3:30b-a3b hielt sich
+nicht an die Kürze und gab seinen Denkprozess mit aus, der dann
+vorgelesen wurde (rund drei Minuten). Das Schlüsselwort /no_think und
+der entsprechende Schalter in Home Assistant blieben wirkungslos; erst
+ein Modell ohne Denkmodus löste das Problem.
+
+**Hybrides Routing** (Folie 19). Home Assistant bietet "Lokale
+Verarbeitung von Befehlen bevorzugen": eindeutige Befehle gehen an die
+regelbasierte Intent-Erkennung, nur der Rest an das Sprachmodell. Das
+entspricht dem im Deck beschriebenen Muster.
+
+**Dritter Beleg für Datenqualität vor Algorithmus.** Nach Verbesserung
+des Whisper-Initial-Prompts wurden die Transkripte fehlerfrei — und die
+Sprachsteuerung funktionierte schlechter als vorher. Grund: Home
+Assistant kannte die nun korrekt verstandenen Gerätenamen nicht, weil
+die Entitäten ohne passende Aliase freigegeben waren. Vorher hatte ein
+ungenaues Transkript zufällig eine freigegebene Gruppe getroffen.
+
+## Offene Frage
+
+EU-AI-Act-Tabelle auf Folie 13 des Infrastructure-Decks (Art. 12, 14, 15
+gegen On-Premises, Cloud, Edge): unklar, ob Abgabe oder nur
+Unterrichtsdiskussion. Bei Mitstudierenden nachfragen.
